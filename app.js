@@ -2,7 +2,12 @@ const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
-const adminRoutes = require('./routes/admin')
+
+// Set a global configuration value
+app.set('view engine', 'pug') // Setting Pug as view engine
+app.set('views', 'views')
+
+const adminData = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 
 // Middlewares
@@ -12,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Admin Routes
-app.use('/admin', adminRoutes)
+app.use('/admin', adminData.routes)
 
 // Public Routes
 app.use(shopRoutes)

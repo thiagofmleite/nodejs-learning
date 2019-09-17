@@ -1,36 +1,9 @@
-.product-form {
-  width: 30rem;
-  max-width: 90%;
-  margin: auto;
+.main-header {
+  background-color: darkcyan;
 }
 
-.form-control {
-  margin: 1rem 0;
-}
-
-.form-control label,
-.form-control input {
-  display: block;
-  width: 100%;
-}
-
-.form-control input {
-  border: 1px solid darkgoldenrod;
-  font: inherit;
-  border-radius: 2px;
-}
-
-button {
-  font: inherit;
-  color: blue;
-  border: 1px solid blue;
-  background-color: white;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-button:hover,
-button:active {
-  background-color: purple;
-  color: white;
+.main-header__item a:hover,
+.main-header__item a:active,
+.main-header__item a.active {
+  color: darkgoldenrod;
 }

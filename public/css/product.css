@@ -1,9 +1,25 @@
-.main-header {
-  background-color: darkcyan;
+.product-form {
+  width: 20rem;
+  max-width: 90%;
+  margin: auto;
 }
 
-.main-header__item a:hover,
-.main-header__item a:active,
-.main-header__item a.active {
-  color: darkgoldenrod;
+.product-item {
+  width: 20rem;
+  max-width: 95%;
+}
+
+.product__title {
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.product__price {
+  text-align: center;
+  color: #4d4d4d;
+  margin-bottom: 0.5rem;
+}
+
+.product__description {
+  text-align: center;
 }

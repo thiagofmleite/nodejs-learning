@@ -1,12 +1,19 @@
 const fs = require('fs')
 const path = require('path')
 const Uuid = require('../util/uuid')
+const Cart = require('./cart')
 
 const p = path.join(
   path.dirname(process.mainModule.filename),
   'data',
   'products.json'
 )
+
+const storeData = products => {
+  fs.writeFile(p, JSON.stringify(products), err => {
+    console.error(err)
+  })
+}
 
 /**
  * Return an array of Products from a JSON file
@@ -18,7 +25,8 @@ const getProductsFromFile = cb => {
     if (err) {
       cb([])
     } else {
-      cb(JSON.parse(fileContent))
+      const products = fileContent.length > 0 ? JSON.parse(fileContent) : []
+      cb(products)
     }
   })
 }
@@ -52,23 +60,17 @@ module.exports = class Product {
     this.price = Number.parseFloat(this.price)
   }
 
-  _storeData(products) {
-    fs.writeFile(p, JSON.stringify(products), err => {
-      console.error(err)
-    })
-  }
-
   _saveNewProduct(products) {
     this.id = Uuid.createUuid()
     products.push(this)
-    this._storeData(products)
+    storeData(products)
   }
 
   _updateProduct(products) {
-    const existingProductIndex = products.findIndex(prod => prod.id === this.id)
+    const existingProductIndex = products.findIndex(p => p.id === this.id)
     const updatedProducts = [...products]
     updatedProducts[existingProductIndex] = this
-    this._storeData(updatedProducts)
+    storeData(updatedProducts)
   }
 
   /**
@@ -85,6 +87,16 @@ module.exports = class Product {
     getProductsFromFile(products => {
       const product = products.find(p => p.id === id)
       callback(product)
+    })
+  }
+
+  static deleteById(id) {
+    getProductsFromFile(products => {
+      console.info('deleting product with id', id)
+      const product = products.find(p => p.id === id)
+      const updatedProducts = products.filter(p => p.id !== id)
+      storeData(updatedProducts)
+      Cart.deleteProduct(id, product.price)
     })
   }
 }

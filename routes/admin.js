@@ -18,4 +18,7 @@ router.post('/add-product', controller.postAddProduct)
 // /admin/add-product => POST
 router.post('/edit-product', controller.postEditProduct)
 
+// /admin/add-product => POST
+router.post('/delete-product', controller.postDeleteProduct)
+
 module.exports = router

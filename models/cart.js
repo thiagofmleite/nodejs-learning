@@ -8,7 +8,7 @@ const p = path.join(
 )
 
 module.exports = class Cart {
-  static addProduct(id, productPrice) {
+  static addProduct(product) {
     // Fetch the previous cart
     fs.readFile(p, (err, fileContent) => {
       let cart = { products: [], totalPrice: 0 }
@@ -16,7 +16,9 @@ module.exports = class Cart {
         cart = fileContent.length > 0 ? JSON.parse(fileContent) : cart
       }
       // Analyse the cart => Find existing product
-      const existingProductIndex = cart.products.findIndex(p => p.id === id)
+      const existingProductIndex = cart.products.findIndex(
+        p => p.id === product.id
+      )
       const existingProduct = cart.products[existingProductIndex]
       let updatedProduct
       // Add new product / increase quantity
@@ -26,12 +28,12 @@ module.exports = class Cart {
         cart.products = [...cart.products]
         cart.products[existingProductIndex] = updatedProduct
       } else {
-        updatedProduct = { id: id, qty: 1, price: productPrice }
+        updatedProduct = { ...product, qty: 1 }
         cart.products = [...cart.products, updatedProduct]
       }
       cart.totalPrice = Cart.getTotalPrice(cart.products)
       fs.writeFile(p, JSON.stringify(cart), err => {
-        console.log(err)
+        console.error(err)
       })
     })
   }
@@ -42,7 +44,7 @@ module.exports = class Cart {
     }, 0)
   }
 
-  static deleteProduct(id, productPrice) {
+  static deleteProduct(id) {
     fs.readFile(p, (err, fileContent) => {
       if (err) {
         console.error(err)
@@ -53,19 +55,28 @@ module.exports = class Cart {
         return
       }
       const updatedCart = { ...JSON.parse(fileContent) }
-      console.log(updatedCart)
       if (!updatedCart.products || !updatedCart.products.length) {
         console.info('Empty cart')
         return
       }
-      const product = updatedCart.products.find(p => p.id === id)
-
+      console.log('Removing product', id)
       updatedCart.products = updatedCart.products.filter(prod => prod.id !== id)
       updatedCart.totalPrice = Cart.getTotalPrice(updatedCart.products)
 
       fs.writeFile(p, JSON.stringify(updatedCart), err => {
-        console.log(err)
+        console.error(err)
       })
+    })
+  }
+
+  static getCart(callback) {
+    fs.readFile(p, (err, fileContent) => {
+      const cart = fileContent.length ? JSON.parse(fileContent) : null
+      if (err) {
+        callback(null)
+      } else {
+        callback(cart)
+      }
     })
   }
 }

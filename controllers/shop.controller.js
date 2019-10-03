@@ -34,17 +34,40 @@ exports.getIndex = (req, res, next) => {
 }
 
 exports.getCart = (req, res, next) => {
-  res.render('shop/cart', {
-    pageTitle: 'Your Cart',
-    path: '/cart'
+  Cart.getCart(cart => {
+    const cartProducts = cart
+      ? cart.products.map(i => {
+          return {
+            productData: new Product(
+              i.id,
+              i.title,
+              i.imageUrl,
+              i.description,
+              i.price
+            ),
+            qty: i.qty
+          }
+        })
+      : []
+    res.render('shop/cart', {
+      pageTitle: 'Your Cart',
+      path: '/cart',
+      products: cartProducts
+    })
   })
 }
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId
   Product.findById(prodId, product => {
-    Cart.addProduct(prodId, product.price)
+    Cart.addProduct(product)
   })
+  res.redirect('/cart')
+}
+
+exports.postCartDeleteProduct = (req, res, next) => {
+  const prodId = req.body.productId
+  Cart.deleteProduct(prodId)
   res.redirect('/cart')
 }
 

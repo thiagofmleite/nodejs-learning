@@ -5,6 +5,7 @@ const controller = require('../controllers/shop.controller')
 router.get('/', controller.getIndex)
 router.get('/products', controller.getProducts)
 router.get('/cart', controller.getCart)
+router.get('/orders', controller.getOrders)
 router.get('/checkout', controller.getCheckout)
 
 module.exports = router

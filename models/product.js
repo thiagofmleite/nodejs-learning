@@ -24,7 +24,8 @@ const getProductsFromFile = cb => {
 }
 
 module.exports = class Product {
-  constructor(title, imageUrl, description, price) {
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id
     this.title = title
     this.imageUrl = imageUrl
     this.description = description
@@ -36,13 +37,38 @@ module.exports = class Product {
    *
    */
   save() {
-    this.id = Uuid.createUuid()
+    this._persistPrice()
     getProductsFromFile(products => {
-      products.push(this)
-      fs.writeFile(p, JSON.stringify(products), err => {
-        console.error(err)
-      })
+      if (this.id) {
+        this._updateProduct(products)
+      } else {
+        this._saveNewProduct(products)
+      }
     })
+  }
+
+  _persistPrice() {
+    this.price = this.price || 0
+    this.price = Number.parseFloat(this.price)
+  }
+
+  _storeData(products) {
+    fs.writeFile(p, JSON.stringify(products), err => {
+      console.error(err)
+    })
+  }
+
+  _saveNewProduct(products) {
+    this.id = Uuid.createUuid()
+    products.push(this)
+    this._storeData(products)
+  }
+
+  _updateProduct(products) {
+    const existingProductIndex = products.findIndex(prod => prod.id === this.id)
+    const updatedProducts = [...products]
+    updatedProducts[existingProductIndex] = this
+    this._storeData(updatedProducts)
   }
 
   /**

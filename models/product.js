@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const Uuid = require('../util/uuid')
 
 const p = path.join(
   path.dirname(process.mainModule.filename),
@@ -35,6 +36,7 @@ module.exports = class Product {
    *
    */
   save() {
+    this.id = Uuid.createUuid()
     getProductsFromFile(products => {
       products.push(this)
       fs.writeFile(p, JSON.stringify(products), err => {
@@ -51,5 +53,12 @@ module.exports = class Product {
    */
   static fetchAll(callback) {
     getProductsFromFile(callback)
+  }
+
+  static findById(id, callback) {
+    getProductsFromFile(products => {
+      const product = products.find(p => p.id === id)
+      callback(product)
+    })
   }
 }

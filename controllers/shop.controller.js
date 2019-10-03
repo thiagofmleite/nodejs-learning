@@ -5,8 +5,19 @@ exports.getProducts = (req, res, next) => {
     res.render('shop/product-list', {
       prods: products,
       pageTitle: 'Shop',
-      path: '/product-list',
+      path: '/products',
       hasProducts: products.length > 0
+    })
+  })
+}
+
+exports.getProduct = (req, res, next) => {
+  const prodId = req.params.productId
+  Product.findById(prodId, product => {
+    res.render('shop/product-detail', {
+      product,
+      pageTitle: product.title,
+      path: '/products'
     })
   })
 }
